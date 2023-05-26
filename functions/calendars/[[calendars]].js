@@ -18,9 +18,9 @@ export async function onRequest(context) {
         team = context.params[1];
     }
     else {
-        var response = new Response();
-        response.status = 404;
-        return response;
+        var notfound = new Response();
+        notfound.status = 404;
+        return notfound;
     }
 
     console.log(`Getcal for [${group}].[${team}] force = >${force}<`)
