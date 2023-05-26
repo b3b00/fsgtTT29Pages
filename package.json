@@ -1,0 +1,28 @@
+{
+    "name": "{{ project-name }}",
+    "private": true,
+    "module": "commonjs",
+    "version": "1.0.0",
+    "description": "package for creating workers templates",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write '**/*.{js,css,json,md}'"
+    },
+    "author": "{{ authors }}",
+    "license": "ISC",
+    "devDependencies": {
+        "better-sqlite3": "^8.0.1",
+        "prettier": "^1.17.0"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0-rc.2",
+        "dayjs": "^1.11.5",
+        "dracula-ui": "^1.0.3",
+        "ejs": "^2.5.6",
+        "itty-router": "^2.1.9",
+        "moment": "^2.24.0",
+        "serverless-cloudflare-workers": "^1.2.0",
+        "sync-request": "6.0.0"
+    }
+}
