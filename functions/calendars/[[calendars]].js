@@ -1,26 +1,38 @@
 import calendars from '../calendars.mjs'
 
+
+function notFound() {
+    let response = new Response('', {
+        status: 404,
+        statusText: "Not Found",
+        headers: {},
+      });
+    return response;
+}
+
+
 export async function onRequest(context) {
-
-
+    
+    console.log(context.params.calendars);
+    console.log(context.params.calendars.length);    
 
     var group = ''
-    var team = context.params[0]
+    var team = ''    
     var force = ''
 
-    if (context.params.length == 3) {
-        force = context.params[0];        
-        group = context.params[1];
-        team = context.params[2];
+    if (context.params.calendars.length == 3) {
+        force = context.params.calendars[0];        
+        group = context.params.calendars[1];
+        team = context.params.calendars[2];
     }
-    else if (context.params.length == 2) {
-        group = context.params[0];
-        team = context.params[1];
+    else if (context.params.calendars.length == 2) {
+        group = context.params.calendars[0];
+        team = context.params.calendars[1];
     }
     else {
-        var notfound = new Response();
-        notfound.status = 404;
-        return notfound;
+        
+        //notfound.status = 404;
+        return notFound();
     }
 
     console.log(`Getcal for [${group}].[${team}] force = >${force}<`)

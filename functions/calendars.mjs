@@ -1,7 +1,9 @@
-import cheerio from 'cheerio'
-import dayjs from 'dayjs'
+import cheerio from '../node_modules/cheerio'
+
+//import cheerio from 'cheerio'
+import dayjs from '../node_modules/dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
-import fs from 'fs'
+//import fs from 'fs'
 
 const groupe_url_schema = 'http://t2t.29.fsgt.org/groupe/groupe'
 
@@ -73,27 +75,27 @@ const iCalendarGeneration = {
     /*
      * write a match event to ics file
      */
-    writeMatchEvent: function(calFile, match, teams, team) {
-        fs.appendFileSync(calFile, '\r\nBEGIN:VEVENT\r\n')
-        fs.appendFileSync(calFile, '\r\nX-WR-TIMEZONE:Europe/Paris\r\n')
-        fs.appendFileSync(
-            calFile,
-            'UID:' + crypto.randomUUID().toUpperCase() + '\r\n'
-        )
-        let date = this.getMatchDate(match, teams)
-        fs.appendFileSync(
-            calFile,
-            'DTSTART;TZID=/Europe/Paris:' + date + '200000\r\n'
-        )
-        fs.appendFileSync(
-            calFile,
-            'DTEND;TZID=/Europe/Paris:' + date + '220000\r\n'
-        )
-        let lbl = this.getMatchLabel(match, team)
-        fs.appendFileSync(calFile, 'SUMMARY:' + lbl + '\r\n')
-        fs.appendFileSync(calFile, 'DESCRIPTION:' + lbl + '\r\n')
-        fs.appendFileSync(calFile, 'END:VEVENT\r\n')
-    },
+    // writeMatchEvent: function(calFile, match, teams, team) {
+    //     fs.appendFileSync(calFile, '\r\nBEGIN:VEVENT\r\n')
+    //     fs.appendFileSync(calFile, '\r\nX-WR-TIMEZONE:Europe/Paris\r\n')
+    //     fs.appendFileSync(
+    //         calFile,
+    //         'UID:' + crypto.randomUUID().toUpperCase() + '\r\n'
+    //     )
+    //     let date = this.getMatchDate(match, teams)
+    //     fs.appendFileSync(
+    //         calFile,
+    //         'DTSTART;TZID=/Europe/Paris:' + date + '200000\r\n'
+    //     )
+    //     fs.appendFileSync(
+    //         calFile,
+    //         'DTEND;TZID=/Europe/Paris:' + date + '220000\r\n'
+    //     )
+    //     let lbl = this.getMatchLabel(match, team)
+    //     fs.appendFileSync(calFile, 'SUMMARY:' + lbl + '\r\n')
+    //     fs.appendFileSync(calFile, 'DESCRIPTION:' + lbl + '\r\n')
+    //     fs.appendFileSync(calFile, 'END:VEVENT\r\n')
+    // },
 
     getICS: function(matches, group, teams, team) {
         let content = ''
@@ -128,28 +130,28 @@ const iCalendarGeneration = {
     /*
      * write ics file for a team
      */
-    writeCalendar: function(matches, group, teams, team) {
-        let calFile =
-            'calendars/' +
-            group +
-            '/' +
-            team.Name.replace(' ', '').toLocaleLowerCase() +
-            '.ics'
+    // writeCalendar: function(matches, group, teams, team) {
+    //     let calFile =
+    //         'calendars/' +
+    //         group +
+    //         '/' +
+    //         team.Name.replace(' ', '').toLocaleLowerCase() +
+    //         '.ics'
 
-        let dir = './calendars'
+    //     let dir = './calendars'
 
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir)
-        }
+    //     if (!fs.existsSync(dir)) {
+    //         fs.mkdirSync(dir)
+    //     }
 
-        dir = './calendars/' + group
+    //     dir = './calendars/' + group
 
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir)
-        }
+    //     if (!fs.existsSync(dir)) {
+    //         fs.mkdirSync(dir)
+    //     }
 
-        fs.writeFileSync(calFile, getICS(matches, group, teams, team))
-    },
+    //     fs.writeFileSync(calFile, getICS(matches, group, teams, team))
+    // },
 }
 
 const scrapper = {
