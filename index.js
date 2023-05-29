@@ -11,7 +11,7 @@ const GetCalendar = async function(request, env, context) {
     console.log(`Getcal for [${group}].[${team}] force = >${force}<`)
 
     if (!force || force != 'force') {
-        const { results } = await env.MYBASE.prepare(
+        const { results } = await env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? '
         )
             .bind(group, team)
@@ -31,14 +31,14 @@ const GetCalendar = async function(request, env, context) {
     let ics = await calendars.GetCalendar(group, team)
 
     if (ics && ics.length > 0) {
-        await env.MYBASE.prepare(
+        await env.D1_CALENDARS.prepare(
             'DELETE FROM calendars WHERE groupe = ? and team = ?'
         )
             .bind(group, team)
             .run()
 
         const { duration } = (
-            await env.MYBASE.prepare(
+            await env.D1_CALENDARS.prepare(
                 'INSERT INTO calendars (groupe,team, calendar) VALUES (?1, ?2, ?3)'
             )
                 .bind(group, team, ics)
@@ -54,7 +54,7 @@ const GetCalendar = async function(request, env, context) {
 }
 
 const table = async function(request, env, context) {
-    const { results } = await env.MYBASE.prepare(
+    const { results } = await env.D1_CALENDARS.prepare(
         'SELECT * FROM calendars'
     ).all()
     return Response.json(results)

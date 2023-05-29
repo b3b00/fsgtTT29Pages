@@ -6,5 +6,5 @@
 
 ## run locally
 ```shell
-wrangler pages dev ./public/ --persist  --d1=MYBASE
+wrangler pages dev ./public/ --persist  --d1=D1_CALENDARS
 ```

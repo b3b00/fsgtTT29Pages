@@ -38,7 +38,7 @@ export async function onRequest(context) {
     console.log(`Getcal for [${group}].[${team}] force = >${force}<`)
 
     if (!force || force != 'force') {
-        const { results } = await context.env.MYBASE.prepare(
+        const { results } = await context.env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? '
         )
             .bind(group, team)
@@ -58,14 +58,14 @@ export async function onRequest(context) {
     let ics = await calendars.GetCalendar(group, team)
 
     if (ics && ics.length > 0) {
-        await context.env.MYBASE.prepare(
+        await context.env.D1_CALENDARS.prepare(
             'DELETE FROM calendars WHERE groupe = ? and team = ?'
         )
             .bind(group, team)
             .run()
 
         const { duration } = (
-            await context.env.MYBASE.prepare(
+            await context.env.D1_CALENDARS.prepare(
                 'INSERT INTO calendars (groupe,team, calendar) VALUES (?1, ?2, ?3)'
             )
                 .bind(group, team, ics)
