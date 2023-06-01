@@ -11,23 +11,37 @@ const iCalendarGeneration = {
     /*
      * format match name
      */
-    getMatchLabel: function(match, team) {
-        if (match.local == team.Name) {
-            return (
-                'FSGT : ' +
-                (match.day.replace('\t', '') +
-                    ' ' +
-                    match.remote.replace('\t', '') +
-                    ' (dom.)')
-            )
-        } else {
-            return (
-                'FSGT : ' +
-                (match.day.replace('\t', '') +
-                    ' ' +
-                    match.local.replace('\t', '') +
-                    ' (ext.)')
-            )
+    getMatchLabel: function(match, team, type) {
+        if (type == captainType) {
+            if (match.local == team.Name) {
+                return (
+                    'FSGT : ' +
+                    (match.day.replace('\t', '') +
+                        ' ' +
+                        match.remote.replace('\t', '') +
+                        ' (dom.)')
+                )
+            } else {
+                return (
+                    'FSGT : ' +
+                    (match.day.replace('\t', '') +
+                        ' ' +
+                        match.local.replace('\t', '') +
+                        ' (ext.)')
+                )
+            }
+        } else if (type == teamType) {
+            if (match.local == team.Name) {
+                return (
+                    'FSGT : '+ 
+                        match.remote.replace('\t', '') +
+                        ' (dom.)');                
+            } else {
+                return (
+                    'FSGT : ' +
+                        match.local.replace('\t', '') +
+                        ' (ext.)');                
+            }
         }
     },
 
@@ -97,30 +111,29 @@ const iCalendarGeneration = {
     //     fs.appendFileSync(calFile, 'END:VEVENT\r\n')
     // },
 
-    getICS: function(matches, group, teams, team) {
+    getICS: function(matches, group, teams, team, type) {
         let content = ''
-
         content += 'BEGIN:VCALENDAR\r\n'
         content += 'X-WR-CALNAME:FSGT\r\n'
         content += 'VERSION:2.0\r\n'
         for (let l = 0; l < matches.length; l++) {
             let m = matches[l]
             if (m.local == team.Name || m.remote == team.Name) {
-                content += this.getMatchEvent(m, teams, team)
+                content += this.getMatchEvent(m, teams, team, type)
             }
         }
         content += 'END:VCALENDAR\r\n'
         return content
     },
 
-    getMatchEvent: function(match, teams, team) {
+    getMatchEvent: function(match, teams, team, type) {
         let content = '\r\nBEGIN:VEVENT\r\n'
         // content += "\r\nX-WR-TIMEZONE:Europe/Paris\r\n";
         let date = this.getMatchDate(match, teams)
         content += 'DTSTART;TZID=/Europe/Paris:' + date + '200000\r\n'
         content += 'UID:' + crypto.randomUUID().toUpperCase() + '\r\n'
         content += 'DTEND;TZID=/Europe/Paris:' + date + '220000\r\n'
-        let lbl = this.getMatchLabel(match, team)
+        let lbl = this.getMatchLabel(match, team, type)
         content += 'SUMMARY:' + lbl + '\r\n'
         content += 'DESCRIPTION:' + lbl + '\r\n'
         content += 'END:VEVENT\r\n'
@@ -327,11 +340,14 @@ const fsgtScrapper = {
  * main call
  */
 
+const teamType = 1
+const captainType = 0
+
 let groups = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
 export default {
     scrapper: fsgtScrapper,
-    GetCalendar: async function(group, team) {
+    GetCalendar: async function(group, team, type) {
         let url = groupe_url_schema + '-' + group
 
         if (group == 'a') {
@@ -351,7 +367,8 @@ export default {
                         matchArray,
                         group,
                         teams,
-                        te
+                        te,
+                        type
                     )
                 }
             }
@@ -397,4 +414,3 @@ export default {
         }
     },
 }
-

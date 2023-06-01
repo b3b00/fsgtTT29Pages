@@ -13,6 +13,8 @@
 
 <body onload="loadGroups();">
 
+<h1> hello</h1>
+
     <iframe id="downloader" style="display:none" ></iframe>
 
     <h1 >charger votre calendrier FSGT TT 29</h1>
@@ -24,7 +26,16 @@
     <label for="teams">Équipes :</label>
     <select  id="teams">
         <option value="">Sélectionner une équipe</option>
-    </select><br><br>
+    </select><br><br>    
+    <fieldset data-role="controlgroup" data-type="horizontal">
+        <legend>type de calendrier :</legend>
+    <input type="radio" id="team" name="caltype" value="1"
+             checked style="display:inline-block">
+      <label for="huey" style="display:inline-block">Équipe</label>
+      <input type="radio" id="captain" name="caltype" value="0"
+             checked style="display:inline-block">
+      <label for="huey" style="display:inline-block">Capitaine</label>
+      </fieldset>
     <input type="checkbox" id="force">Regénérer le calendrier</input><br><br>
     <button  onclick="download();">Télécharger le calendrier</button>
 

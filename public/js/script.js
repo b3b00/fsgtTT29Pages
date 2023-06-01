@@ -28,10 +28,17 @@ changeGroup = function (group) {
     }
 }
 
+function findSelection(name) {
+    return document.querySelector(`[name="${name}"]:checked`).value
+}
+
+
 function download() {
     teams = document.getElementById("teams");
     groups = document.getElementById('groups');
-    forceInput = document.getElementById('force');    
+    forceInput = document.getElementById('force');   
+    type=findSelection("caltype");   
+ 
 
     group = groups.value;
     team = teams.value;
@@ -42,7 +49,7 @@ function download() {
         return;
     }
     downloader = document.getElementById("downloader");
-    downloader.src = `/calendars${force}/${group}/${shortTeam}`;
+    downloader.src = `/calendars${force}/${group}/${shortTeam}/${type}`;
     downloader.download= `${shortTeam}.ics`;
     console.log(`download ${group} - ${shortTeam}`)
 }
