@@ -37,19 +37,20 @@ function download() {
     teams = document.getElementById("teams");
     groups = document.getElementById('groups');
     forceInput = document.getElementById('force');   
-    type=findSelection("caltype");   
+    type=findSelection("caltype");
+    type=`type=${type}`;   
  
 
     group = groups.value;
     team = teams.value;
-    force = forceInput.checked ? '/force' : ''
+    force = forceInput.checked ? 'force=1' : 'force=0'
     shortTeam = team != null ? team.replace(" ", "").toLocaleLowerCase() : "";
     if (shortTeam == "" || group == "") {
         window.alert("vous devez d'abord choisir un group et une équipe !");
         return;
     }
     downloader = document.getElementById("downloader");
-    downloader.src = `/calendars${force}/${group}/${shortTeam}/${type}`;
+    downloader.src = `/calendars/${group}/${shortTeam}?${type}&${force}`;
     downloader.download= `${shortTeam}.ics`;
     console.log(`download ${group} - ${shortTeam}`)
 }

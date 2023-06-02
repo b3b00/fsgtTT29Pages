@@ -10,37 +10,35 @@ function notFound() {
     return response;
 }
 
+function getQueryParameter(url, name, defaultValue) {
+const { searchParams } = new URL(url)
+  let value = searchParams.get(name)
+  return value ?? defaultValue;
+}
 
 export async function onRequest(context) {
     
     console.log(context.params.calendars);
     console.log(context.params.calendars.length);    
 
+    
+
     var group = ''
     var team = ''    
-    var force = ''
-    var type = '1'
+    var force = getQueryParameter(context.request.url,'force','0');
+    var type = getQueryParameter(context.request.url,'type','0') == '0' ? 0 : 1;
 
-    if (context.params.calendars.length == 4) {
-        force = context.params.calendars[0];        
-        group = context.params.calendars[1];
-        team = context.params.calendars[2];
-        type = context.params.calendars[3];
-    }
-    else if (context.params.calendars.length == 3) {
+    if (context.params.calendars.length == 2) {        
         group = context.params.calendars[0];
-        team = context.params.calendars[1];
-        type = context.params.calendars[2];
+        team = context.params.calendars[1];        
     }
-    else {
-        
-        //notfound.status = 404;
+    else {                
         return notFound();
     }
 
     console.log(`Getcal for [${group}].[${team}] ${type} force = >${force}<`)
 
-    if (!force || force != 'force') {
+    if (!force || force != '0') {
         const { results } = await context.env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?'
         )
