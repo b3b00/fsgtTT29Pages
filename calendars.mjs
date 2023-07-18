@@ -5,7 +5,22 @@ import fs from 'fs'
 
 const groupe_url_schema = 'http://t2t.29.fsgt.org/groupe/groupe'
 
-const iCalendarGeneration = {
+const /**
+ * iCalendarGeneration object is responsible for generating iCalendar events related to sports matches from the provided data.
+ * This object contains methods to format match labels, match dates and to write iCalendar events. It also helps to find team
+ * information, local team week day and to generate an iCalendar file for a specified team.
+ *
+ * Object Methods:
+ * - getMatchLabel(match, team): Generates a match label based on the team and match.
+ * - getTeam(teams, teamName): Finds the team information from the teams array based on the team name.
+ * - getLocalTeamWeekDay(day): Returns a local team weekday based on the provided day.
+ * - getMatchDate(match, teams): Generates a match date based on the match and teams array.
+ * - writeMatchEvent(calFile, match, teams, team): Writes a match event to the specified iCalendar file.
+ * - getICS(matches, group, teams, team): Generates an iCalendar file content for the specified team.
+ * - getMatchEvent(match, teams, team): Generates an iCalendar event text based on the match, teams array and team.
+ * - writeCalendar(matches, group, teams, team): Writes an iCalendar file for the specified team.
+ */
+iCalendarGeneration = {
     /*
      * format match name
      */

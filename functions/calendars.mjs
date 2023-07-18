@@ -7,6 +7,22 @@ import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 
 const groupe_url_schema = 'http://t2t.29.fsgt.org/groupe/groupe'
 
+
+/**
+ * iCalendarGeneration object is responsible for generating iCalendar events related to sports matches from the provided data.
+ * This object contains methods to format match labels, match dates and to write iCalendar events. It also helps to find team
+ * information, local team week day and to generate an iCalendar file for a specified team.
+ *
+ * Object Methods:
+ * - getMatchLabel(match, team): Generates a match label based on the team and match.
+ * - getTeam(teams, teamName): Finds the team information from the teams array based on the team name.
+ * - getLocalTeamWeekDay(day): Returns a local team weekday based on the provided day.
+ * - getMatchDate(match, teams): Generates a match date based on the match and teams array.
+ * - writeMatchEvent(calFile, match, teams, team): Writes a match event to the specified iCalendar file.
+ * - getICS(matches, group, teams, team): Generates an iCalendar file content for the specified team.
+ * - getMatchEvent(match, teams, team): Generates an iCalendar event text based on the match, teams array and team.
+ * - writeCalendar(matches, group, teams, team): Writes an iCalendar file for the specified team.
+ */
 const iCalendarGeneration = {
     /*
      * format match name
@@ -167,6 +183,17 @@ const iCalendarGeneration = {
     // },
 }
 
+/**
+ * The scrapper object contains methods to extract specific data from cheerio node objects.
+ *
+ * Available Methods:
+ * - extractInnerTagsValueToObject(tagName, mapping, node, acceptMissingItems): Extracts values of child nodes
+ *   with name equal to tagName, maps the extracted values based on a given mapping object, and collects
+ *   those values within a resulting object. If acceptMissingItems is set to false, the extraction ends upon
+ *   encountering an undefined value and returns null.
+ * - etxractdataFromNodeArray(html, selector): Extracts data from a cheerio node array based on the provided
+ *   HTML content and selector string, and returns an array containing those extracted data items.
+ */
 const scrapper = {
     /*
      * from a node (node) extract all child node with name == tagName
@@ -209,6 +236,14 @@ const scrapper = {
         return object
     },
 
+    /**
+     * etxractdataFromNodeArray: Extracts data from a cheerio node array based on the HTML and selector provided.
+     *
+     * @param {string} html - The HTML content to be parsed.
+     * @param {string} selector - The selector to be used for extracting data.
+     * @returns {Array} - An array containing the extracted data from the nodes.
+     */
+
     etxractdataFromNodeArray: function(html, selector) {
         let values = Array()
         let content = cheerio.load(html)
@@ -222,6 +257,17 @@ const scrapper = {
     },
 }
 
+/**
+ * fsgtScrapper object provides methods to scrape team and match data from the FSGT website.
+ *
+ * Object Methods:
+ * - getTeamDay(team): Fetches the playing day for a given team from the FSGT website.
+ * - shortName(team): Returns a short name version of the team by removing spaces and converting to lower case.
+ * - getTeams(html, light): Extracts an array of teams from the HTML content. If light is true, it avoids fetching team playing day.
+ * - getTeamsByGroup(groups, light): Asynchronously fetches teams from FSGT website and groups them by the provided group names.
+ * - extractMatchFromRow(row): Extracts match data from an HTML table row of the match.
+ * - getMatches(html): Extracts an array of matches from the HTML content of the FSGT website.
+ */
 const fsgtScrapper = {
     getTeamDay: async function(team) {
         let url =
