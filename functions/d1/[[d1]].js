@@ -1,17 +1,18 @@
-function post(uri, key, body) {}
-
-async function get(uri, key) {
-    console.log(`get(${uri},${key})`)
-    // var headers = new Headers()
-    // headers.append('Authorization', )
-
+async function request(uri,key,method, body) 
+{
+    console.log(`${method}(${uri},${key})`)
+    console.log(body);
+    
     var options = {
-        method: 'GET',
-        headers: {
+        "method": method,
+        "headers": {
             'Authorization': `Bearer ${key}`
         },
-        mode: 'cors',
-        cache: 'default',
+        "mode": 'cors',
+        "cache": 'default'
+    }
+    if (body) {
+        options.body = JSON.stringify(body);
     }
 
     console.log(`options ${options}`, options)
@@ -30,6 +31,15 @@ async function get(uri, key) {
     }
 }
 
+
+async function post(uri, key, body) {
+    return await request(uri,key,"POST",body);
+}
+
+async function get(uri, key) {
+    return await request(uri,key,"GET",undefined);   
+}
+
 async function GetProjectId(context, projectName) {
     var projectInfo = await get(
         `https://api.cloudflare.com/client/v4/accounts/${context.env.ACCOUNT_ID}/pages/projects/${projectName}`,
@@ -43,7 +53,18 @@ async function GetProjectId(context, projectName) {
     return null
 }
 
-function CreateD1(name) {}
+async function CreateD1(context, dbName) {
+       var payLoad = {
+           "name":dbName
+       }
+       console.log(`CreateD1(${dbName})`);
+       console.log(payLoad);
+        var d1 = await post(`https://api.cloudflare.com/client/v4/accounts/${context.env.ACCOUNT_ID}/d1/database`,context.env.API_KEY,payLoad);
+        console.log('d1 created');
+        console.log(d1);
+        console.log("---------------------------------");
+    return d1;
+}
 
 function BindD1(d1Id, appId) {}
 
@@ -52,7 +73,8 @@ export async function onRequest(context) {
     var appName = params[0]
     var d1Name = null
     if (params.length >= 1) {
-        d1Name = params[1]
+        d1Name = params[1];
+        console.log(`D1 name :[[${d1Name}]]`);
     }
     console.log("*************************************")
     var projectId = await GetProjectId(context, appName);
@@ -71,7 +93,21 @@ export async function onRequest(context) {
     console.log("*************************************")
     console.log("*************************************")
 
-    let response = new Response(JSON.stringify(r));
+    var d1 = {}
+    if (d1Name) {
+        console.log(`CREATE D1 database >${d1Name}<`);
+        d1 = await CreateD1(context, d1Name); 
+    }
+    else {
+        console.log(`DO NOT CREATE D1 database >${d1Name}<`);
+    }
+
+    var res = {
+        "meta" : r,
+        "d1" : d1
+    }
+
+    let response = new Response(JSON.stringify(res));
     response.headers.set('Content-Type', 'text/pplain');
     return response;
 }
