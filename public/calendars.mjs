@@ -1,6 +1,6 @@
-import cheerio from '../node_modules/cheerio'
+import cheerio from 'cheerio'
 
-import dayjs from '../node_modules/dayjs'
+import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 
 
