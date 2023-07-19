@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 
 import dayjs from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 
 const groupe_url_schema = 'http://t2t.29.fsgt.org/groupe/groupe'
