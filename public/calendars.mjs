@@ -107,9 +107,10 @@ const iCalendarGeneration = {
         content += 'DTSTART;TZID=/Europe/Paris:' + date + '200000\r\n'
         content += 'UID:' + crypto.randomUUID().toUpperCase() + '\r\n'
         content += 'DTEND;TZID=/Europe/Paris:' + date + '220000\r\n'
-        let lbl = this.getMatchLabel(match, team, type)
+        let lbl = this.getMatchLabel(match, team, teamType)
+        let description = type == captainType ? this.getMatchLabel(match, team, captainType) : '';
         content += 'SUMMARY:' + lbl + '\r\n'
-        content += 'DESCRIPTION:' + lbl + '\r\n'
+        content += 'DESCRIPTION:' + description + '\r\n'
         content += 'END:VEVENT\r\n'
         return content
     },
@@ -247,7 +248,6 @@ const fsgtScrapper = {
             }
         }
         catch(exception) {
-            console.log(`     group ${groups[i]} fetch exception ${exception} `);            
         }
 
         }
@@ -306,18 +306,19 @@ let groups = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 export default {
     scrapper: fsgtScrapper,
     GetCalendar: async function(group, team, type) {
+
         let url = groupe_url_schema + '-' + group
 
         if (group == 'a') {
             url = groupe_url_schema
         }
+
         let res = await fetch(url)
         if (res.status == 200) {
             let html = await res.text()
 
             let teams = await fsgtScrapper.getTeams(html, false)
             let matchArray = fsgtScrapper.getMatches(html)
-
             if (team != null) {
                 let te = iCalendarGeneration.getTeam(teams, team)
                 if (te != null) {

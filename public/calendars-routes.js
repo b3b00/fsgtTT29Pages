@@ -18,20 +18,13 @@ const { searchParams } = new URL(url)
 
 
 export async function GetCalendar(env, group, team, force, type) {
-    
-
     console.log(`Getcal for [${group}].[${team}] ${type} force = >${force}<`)
-
-    if (!force || force != '0') {
-        console.log('********* env ***********');
-        console.log(env);
-        console.log('********* /env ***********');
+    if (!force) {        
         const { results } = await env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?'
         )
             .bind(group, team, type)
             .all()
-        console.log('SQL RESULTS', results)
         if (results && results.length > 0) {
             console.log('returning saved calendar : ')
             let response = new Response(results[0].calendar)
