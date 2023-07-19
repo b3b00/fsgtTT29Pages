@@ -1,7 +1,7 @@
 import { Router, withParams } from 'itty-router'
-import calendars from './calendars.mjs'
 import {GetCalendar} from './calendars-routes.js'
 import {GetGroups} from './groups-routes.js'
+import Mustache from 'mustache';
 
 const router = Router()
 
@@ -30,6 +30,36 @@ router.get('/calendars/:group/:team', withParams, async (request,env, context, g
 router.get('/groups', async () => {
     return await GetGroups();
 });
+
+router.get('/test/:who',async (request , env) => {
+    const url = request.url;
+    const who = request.params.who;
+    console.log(url);
+    console.log(request);
+    const modifiedRequest = new Request('http://localhost:8788/test.tpl', request)
+    console.log(modifiedRequest)
+    var response = await env.ASSETS.fetch(modifiedRequest);
+    console.log(response);
+    var text = await response.text();
+    console.log(text);
+
+    var view = {
+        "who": who,
+        "links": [
+            {"label":"google","url":"http://www.google.com"},
+            {"label":"HN","url":"http://news.ycombinator.com/"},
+            {"label":"CloudFlare","url":"www.cloudflare.com/"},
+        ]
+      };
+      
+      var output = Mustache.render(text, view);
+
+
+    //text = text.replace('#WHO#', who);
+    var response = new Response(output);
+    response.headers.set('Content-Type', 'text/html')
+    return response;
+})
 
 router.all('*', (request, env) => {
     return env.ASSETS.fetch(request);
