@@ -1,4 +1,4 @@
-import { Router } from 'itty-router'
+import { Router, withParams } from 'itty-router'
 import calendars from './calendars.mjs'
 import {GetCalendar} from './calendars-routes.js'
 import {GetGroups} from './groups-routes.js'
@@ -20,32 +20,15 @@ async function calendar(request,env,context,group,team,force)  {
             type = request.query.type;
         }
     }
-    console.log(`========> getting calenda(${group},${team},${force},${type})`);
+    console.log(`========> getting calendar(${group},${team},${force},${type})`);
     return await GetCalendar(env,group,team,force,type);
 } 
 
 
 
-router.get('/calendars/:group/:team', async (request,env, context, group, team) => {
-    console.log('********* REQUEST ***********');
-    console.log(request);
-    console.log('********* /REQUEST ***********');
-    console.log('********* ENV ***********');
-        console.log(env);
-        console.log('********* /ENV ***********');
-        console.log('********* CONTEXT ***********');
-        console.log(context);
-        console.log('********* /CONTEXT ***********');
-        console.log('********* group ***********');
-        console.log(group);
-        console.log('********* /group ***********');
-        console.log('********* team ***********');
-        console.log(team);
-        console.log('********* /team ***********');
-    return calendar(request,env,false,context,group)
-});
+router.get('/calendars/:group/:team', withParams, async (request,env, context, group, team) => calendar(request,env,context,request.params.group,request.params.team,false));
 
-//router.get('/calendars/force/:group/:team', async (group, team, request, env, context) => calendar(group,team,true,request,env));
+router.get('/calendars/force/:group/:team', async (group, team, request, env, context) => calendar(request,env,context,request.params.group,request.params.team,true));
 
 router.get('/groups', async () => {
     return await GetGroups();
