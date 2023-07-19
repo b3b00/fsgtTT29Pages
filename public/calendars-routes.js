@@ -1,4 +1,4 @@
-import calendars from '../calendars.mjs'
+import calendars from './calendars.mjs'
 
 
 function notFound() {
@@ -16,30 +16,17 @@ const { searchParams } = new URL(url)
   return value ?? defaultValue;
 }
 
-export async function onRequest(context) {
+
+export async function GetCalendar(env, group, team, force, type) {
     
-    console.log(context.params.calendars);
-    console.log(context.params.calendars.length);    
-
-    
-
-    var group = ''
-    var team = ''    
-    var force = getQueryParameter(context.request.url,'force','0');
-    var type = getQueryParameter(context.request.url,'type','0') == '0' ? 0 : 1;
-
-    if (context.params.calendars.length == 2) {        
-        group = context.params.calendars[0];
-        team = context.params.calendars[1];        
-    }
-    else {                
-        return notFound();
-    }
 
     console.log(`Getcal for [${group}].[${team}] ${type} force = >${force}<`)
 
     if (!force || force != '0') {
-        const { results } = await context.env.D1_CALENDARS.prepare(
+        console.log('********* env ***********');
+        console.log(env);
+        console.log('********* /env ***********');
+        const { results } = await env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?'
         )
             .bind(group, team, type)
@@ -59,14 +46,14 @@ export async function onRequest(context) {
     let ics = await calendars.GetCalendar(group, team, type)
 
     if (ics && ics.length > 0) {
-        await context.env.D1_CALENDARS.prepare(
+        await env.D1_CALENDARS.prepare(
             'DELETE FROM calendars WHERE groupe = ? and team = ? and type = ?'
         )
             .bind(group, team, type)
             .run()
 
         const { duration } = (
-            await context.env.D1_CALENDARS.prepare(
+            await env.D1_CALENDARS.prepare(
                 'INSERT INTO calendars (groupe,team, type, calendar) VALUES (?1, ?2, ?3, ?4)'
             )
                 .bind(group, team, type, ics)
@@ -80,3 +67,4 @@ export async function onRequest(context) {
     response.headers.set('Content-Type', 'text/calendar')
     return response
 }
+
