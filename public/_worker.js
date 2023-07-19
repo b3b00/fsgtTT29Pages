@@ -1,69 +1,102 @@
 import { Router, withParams } from 'itty-router'
-import {GetCalendar} from './calendars-routes.js'
-import {GetGroups} from './groups-routes.js'
-import Mustache from 'mustache';
+import { GetCalendar } from './calendars-routes.js'
+import { GetGroups, GetTeams } from './groups-routes.js'
+import Mustache from 'mustache'
 
 const router = Router()
 
+async function RenderTemplate(env, request, templatePath, view, mimeType) {
+    var url = new URL(request.url)
+    var templateUrl = `${url.origin}/${templatePath}`
+    var templateRequest = new Request(templateUrl, request)
+    var response = await env.ASSETS.fetch(templateRequest)
+    var text = await response.text()
+    var output = Mustache.render(text, view)
+    var response = new Response(output)
+    response.headers.set('Content-Type', mimeType)
+    return response
+}
 
-async function calendar(request,env,context,group,team)  {
-    var type = 1;
-    var force = false;
+async function RenderHtml(env, request, templatePath, view) {
+    return RenderTemplate(env, request, templatePath, view, 'text/html')
+}
+
+async function calendar(request, env, context, group, team) {
+    var type = 1
+    var force = false
     if (request.query) {
         if (request.query.type) {
-            type = request.query.type;
+            type = request.query.type
         }
-        console.log('force from query '+request.query.force);
         if (request.query.force) {
-            force = true;
+            force = true
         }
     }
-    return await GetCalendar(env,group,team,force,type);
-} 
+    return await GetCalendar(env, group, team, force, type)
+}
+
+router.get(
+    '/calendars/:group/:team',
+    withParams,
+    async (request, env, context, group, team) =>
+        calendar(
+            request,
+            env,
+            context,
+            decodeURI(request.params.group),
+            decodeURI(request.params.team)
+        )
+)
 
 
-
-router.get('/calendars/:group/:team', withParams, async (request,env, context, group, team) => calendar(request,env,context,decodeURI(request.params.group),decodeURI(request.params.team)));
-
-//router.get('/calendars/:group/:team', async (group, team, request, env, context) => calendar(request,env,context,request.params.group,request.params.team,true));
 
 router.get('/groups', async () => {
-    return await GetGroups();
-});
+    return await GetGroups()
+})
 
-router.get('/test/:who',async (request , env) => {
-    const url = request.url;
-    const who = request.params.who;
-    console.log(url);
-    console.log(request);
-    const modifiedRequest = new Request('http://localhost:8788/test.tpl', request)
-    console.log(modifiedRequest)
-    var response = await env.ASSETS.fetch(modifiedRequest);
-    console.log(response);
-    var text = await response.text();
-    console.log(text);
+router.get('/htmx/index', async(request, env) => {
+    const who = request.params.who
 
     var view = {
-        "who": who,
-        "links": [
-            {"label":"google","url":"http://www.google.com"},
-            {"label":"HN","url":"http://news.ycombinator.com/"},
-            {"label":"CloudFlare","url":"www.cloudflare.com/"},
-        ]
-      };
-      
-      var output = Mustache.render(text, view);
+        
+        groups: [
+            {"name":"A"},
+            {"name":"B"},
+            {"name":"C"},
+            {"name":"D"},
+            {"name":"E"},
+            {"name":"F"}
+        ],
+    }
 
+    return RenderHtml(env, request, 'index2.tpl', view)
+})
 
-    //text = text.replace('#WHO#', who);
-    var response = new Response(output);
-    response.headers.set('Content-Type', 'text/html')
-    return response;
+router.get('/htmx/teams', async(request, env) => {
+    var group = request.query.group;
+    var teams = await GetTeams(group);
+    return await RenderHtml(env,request,'teams.tpl',{teams});
+})
+
+router.get('/test/:who', async (request, env) => {
+    const who = request.params.who
+
+    var view = {
+        who: who,
+        links: [
+            { label: 'google', url: 'http://www.google.com' },
+            { label: 'HN', url: 'http://news.ycombinator.com/' },
+            { label: 'CloudFlare', url: 'www.cloudflare.com/' },
+        ],
+    }
+
+    return RenderHtml(env, request, 'test.tpl', view)
 })
 
 router.all('*', (request, env) => {
-    return env.ASSETS.fetch(request);
-}); 
+    console.log('assets handler');
+    return env.ASSETS.fetch(request)
+})
 
 export default {
     async fetch(request, environment, context) {

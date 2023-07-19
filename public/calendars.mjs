@@ -3,7 +3,6 @@ import cheerio from 'cheerio'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 
-
 const groupe_url_schema = 'http://t2t.29.fsgt.org/groupe/groupe'
 
 const iCalendarGeneration = {
@@ -31,15 +30,9 @@ const iCalendarGeneration = {
             }
         } else if (type == teamType) {
             if (match.local == team.Name) {
-                return (
-                    'FSGT : '+ 
-                        match.remote.replace('\t', '') +
-                        ' (dom.)');                
+                return 'FSGT : ' + match.remote.replace('\t', '') + ' (dom.)'
             } else {
-                return (
-                    'FSGT : ' +
-                        match.local.replace('\t', '') +
-                        ' (ext.)');                
+                return 'FSGT : ' + match.local.replace('\t', '') + ' (ext.)'
             }
         }
     },
@@ -108,14 +101,15 @@ const iCalendarGeneration = {
         content += 'UID:' + crypto.randomUUID().toUpperCase() + '\r\n'
         content += 'DTEND;TZID=/Europe/Paris:' + date + '220000\r\n'
         let lbl = this.getMatchLabel(match, team, teamType)
-        let description = type == captainType ? this.getMatchLabel(match, team, captainType) : '';
+        let description =
+            type == captainType
+                ? this.getMatchLabel(match, team, captainType)
+                : ''
         content += 'SUMMARY:' + lbl + '\r\n'
         content += 'DESCRIPTION:' + description + '\r\n'
         content += 'END:VEVENT\r\n'
         return content
     },
-
-    
 }
 
 const scrapper = {
@@ -228,6 +222,24 @@ const fsgtScrapper = {
         return teams
     },
 
+    getTeamsForGroup: async function(group) {
+        let url = groupe_url_schema + '-' + group
+
+        if (group == 'a' || group == 'A') {
+            url = groupe_url_schema
+        }
+
+        let res = await fetch(url)
+        console.log(`teams fetch @${url} => ${res.status} - ${res.statusText}`)
+        if (res.status == 200) {
+            let html = await res.text()
+            let teams = await fsgtScrapper.getTeams(html, true)
+            return teams
+        } else {
+            return []
+        }
+    },
+
     getTeamsByGroup: async function(groups, light) {
         let teamsGrouped = {}
         for (let i = 0; i < groups.length; i++) {
@@ -237,19 +249,15 @@ const fsgtScrapper = {
                 url = groupe_url_schema
             }
             try {
-            let res = await fetch(url)
+                let res = await fetch(url)
 
-            if (res.status == 200) {
-                let html = await res.text()
-                let teams = await fsgtScrapper.getTeams(html, light)
-                teamsGrouped[groups[i]] = teams
-            }
-            else {
-            }
-        }
-        catch(exception) {
-        }
-
+                if (res.status == 200) {
+                    let html = await res.text()
+                    let teams = await fsgtScrapper.getTeams(html, light)
+                    teamsGrouped[groups[i]] = teams
+                } else {
+                }
+            } catch (exception) {}
         }
         return teamsGrouped
     },
@@ -306,7 +314,6 @@ let groups = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 export default {
     scrapper: fsgtScrapper,
     GetCalendar: async function(group, team, type) {
-
         let url = groupe_url_schema + '-' + group
 
         if (group == 'a') {
