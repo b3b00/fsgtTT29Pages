@@ -74,7 +74,7 @@ router.get('/groups', async () => {
     return await GetGroups()
 })
 
-router.get('/htmx/index', async(request, env) => {
+router.get('/', async(request, env) => {
     const who = request.params.who
 
     var view = {
@@ -92,7 +92,7 @@ router.get('/htmx/index', async(request, env) => {
     return RenderHtml(env, request, 'index2.tpl', view)
 })
 
-router.get('/htmx/teams', async(request, env) => {
+router.get('/teams', async(request, env) => {
 
     var teamfetcher = async () => {
         var group = request.query.group;
