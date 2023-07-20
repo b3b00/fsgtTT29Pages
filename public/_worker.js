@@ -1,3 +1,5 @@
+// NOTE : _worker.js must be place at the root of the output dir == ./public for this app
+
 import { Router, withParams } from 'itty-router'
 import { GetCalendar } from './calendars-routes.js'
 import { GetGroups, GetTeams } from './groups-routes.js'
@@ -17,6 +19,7 @@ async function GetFromOrCatchOrFetch(request, ttl, fetcher) {
 
     response.headers.set('Cache-Control', `max-age:${ttl}`);    
     console.log(`getOrFetch : caching`);
+    // NOTE : when using cache the reponse MUST be cloned before put to cache
     cache.put(request,response.clone());
     
     return response;
