@@ -1,6 +1,6 @@
 import calendars from './calendars.mjs'
 
-export async function onRequest(context) {
+export async function GetGroups() {
     
     console.log(`loading groups`)
 
@@ -8,11 +8,15 @@ export async function onRequest(context) {
         ['a', 'b', 'c', 'd', 'e', 'f'],
         true
     )
+
+    calendars.scrapper.getTeamsByGroup
     let response = new Response(JSON.stringify(teamsByGroup))
     response.headers.set('Content-type', 'application/json')
     return response
 
-
-        //const task = await context.env.TODO_LIST.get("Task:123");
-    return new Response("groups")
   }
+
+  export async function GetTeams(group) {
+    return await calendars.scrapper.getTeamsForGroup(group);
+  }
+
