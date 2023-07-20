@@ -172,7 +172,12 @@ const fsgtScrapper = {
         let url =
             'http://t2t.29.fsgt.org/equipe/' +
             team.replace(/ /g, '-').toLowerCase()
-        let res = await fetch(url)
+        let res = await fetch(url,{
+            cf: {                
+                cacheTtl: 3600,
+                cacheEverything: true                
+              }
+        })
         let day = ''
 
         if (res.status == 200) {
@@ -229,7 +234,12 @@ const fsgtScrapper = {
             url = groupe_url_schema
         }
 
-        let res = await fetch(url)
+        let res = await fetch(url,{
+            cf: {                
+                cacheTtl: 3600,
+                cacheEverything: true                
+              }
+        })
         console.log(`teams fetch @${url} => ${res.status} - ${res.statusText}`)
         if (res.status == 200) {
             let html = await res.text()
@@ -249,7 +259,12 @@ const fsgtScrapper = {
                 url = groupe_url_schema
             }
             try {
-                let res = await fetch(url)
+                let res = await fetch(url,{
+                    cf: {                
+                        cacheTtl: 3600,
+                        cacheEverything: true                
+                      }
+                })
 
                 if (res.status == 200) {
                     let html = await res.text()
@@ -320,7 +335,12 @@ export default {
             url = groupe_url_schema
         }
 
-        let res = await fetch(url)
+        let res = await fetch(url,{
+            cf: {                
+                cacheTtl: 3600,
+                cacheEverything: true                
+              }
+        })
         if (res.status == 200) {
             let html = await res.text()
 
@@ -348,7 +368,12 @@ export default {
             url = groupe_url_schema
         }
 
-        let res = await fetch(url)
+        let res = await fetch(url,{
+            cf: {                
+                cacheTtl: 3600,
+                cacheEverything: true                
+              }
+        })
 
         if (res.status == 200) {
             let html = await res.text()

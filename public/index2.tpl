@@ -20,6 +20,7 @@
     <h1 >charger votre calendrier FSGT TT 29</h1>
     <label for="groups">Groupes : </label>
     <select name="group" id="groups" hx-get="/htmx/teams" hx-target="#teams" hx-indicator=".htmx-indicator">
+        <option value="">Sélectionner une équipe</option>
         {{#groups}}
         <option value="{{name}}">{{name}}</option>        
         {{/groups}}

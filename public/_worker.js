@@ -5,6 +5,23 @@ import Mustache from 'mustache'
 
 const router = Router()
 
+async function GetFromOrCatchOrFetch(request, ttl, fetcher) {
+    let cache = caches.default;
+    var cached = await cache.match(request);
+    if (cached) {
+        return cached;
+    }
+    console.log(`getOrFetch : fetching`);
+    var response = await fetcher();
+    console.log(`getOrFetch : fetched`,response);
+
+    response.headers.set('Cache-Control', `max-age:${ttl}`);    
+    console.log(`getOrFetch : caching`);
+    cache.put(request,response.clone());
+    
+    return response;
+}
+
 async function RenderTemplate(env, request, templatePath, view, mimeType) {
     var url = new URL(request.url)
     var templateUrl = `${url.origin}/${templatePath}`
@@ -73,9 +90,15 @@ router.get('/htmx/index', async(request, env) => {
 })
 
 router.get('/htmx/teams', async(request, env) => {
-    var group = request.query.group;
-    var teams = await GetTeams(group);
-    return await RenderHtml(env,request,'teams.tpl',{teams});
+
+    var teamfetcher = async () => {
+        var group = request.query.group;
+        var teams = await GetTeams(group);
+        var response = RenderHtml(env,request,'teams.tpl',{teams});
+        return response;
+    }
+    
+    return GetFromOrCatchOrFetch(request,3600,teamfetcher);
 })
 
 router.get('/test/:who', async (request, env) => {
