@@ -165,16 +165,29 @@ const scrapper = {
         }
         return values
     },
+
+    etxractAttributeFromNodeArray: function(html, selector, attributeName) {
+        let values = Array()
+        let content = cheerio.load(html)
+        let nodes = content(selector)
+        for (let i = 0; i < nodes.length; i++) {
+            let node = nodes[i]
+            let name = node.attribs[attributeName]
+            values.push(name)
+        }
+        return values
+    },
 }
 
 const fsgtScrapper = {
-    getTeamDay: async function(team) {
-        let url =
-            'http://t2t.29.fsgt.org/equipe/' +
-            team.replace(/ /g, '-').toLowerCase()
+    getTeamDay: async function(team, url) {
+        let basoluteUrl = 'http://t2t.29.fsgt.org'+url
+        //let url =
+            //'http://t2t.29.fsgt.org/equipe/' +
+            //team.replace(/ /g, '-').toLowerCase()
         // NOTE : cloudflare catch for outgoing request can be configured using cf:{} options
         // see https://developers.cloudflare.com/workers/examples/cache-using-fetch/
-        let res = await fetch(url,{
+        let res = await fetch(basoluteUrl,{
             cf: {                
                 cacheTtl: 3600,
                 cacheEverything: true                
@@ -212,15 +225,23 @@ const fsgtScrapper = {
     getTeams: async function(html, light) {
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
-            'div#classement table tr td.nom'
+            'div.view-equipes table tr td a'            
         )
+
+        let teamUrls = scrapper.etxractAttributeFromNodeArray(
+            html,
+            'div.view-equipes table tr td a',
+            'href'            
+        )
+        
         let teams = []
-        for (let i = 0; i < teamNames.length; i++) {
+        for (let i = 0; i < teamNames.length; i = i + 2) {
             let team = {}
             team.Name = teamNames[i]
             if (!light) {
                 // do not request team playing day to avoir too many subrequests.
-                const d = await fsgtScrapper.getTeamDay(team.Name)
+                console.log(teamNames[i],teamUrls[i]);
+                const d = await fsgtScrapper.getTeamDay(team.Name,teamUrls[i])
                 team.Day = d
             }
             teams.push(team)
