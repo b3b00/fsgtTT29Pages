@@ -1,4 +1,4 @@
-import cheerio from 'cheerio'
+(import cheerio from 'cheerio'
 
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -88,8 +88,12 @@ console.log('getics : '+group+'-'+team)
         content += 'VERSION:2.0\r\n'
         for (let l = 0; l < matches.length; l++) {
             let m = matches[l]
-console.log(`and match ${m.local} ${m.remote} // ${team.name}`)
-            if (m.local == team.name || m.remote == team.name) {
+
+let local = fsgtScrapper.shortName(m.local) ;
+
+let remote = fsgtScrapper.shortName(m.remote);
+console.log(`and match ${local} ${remote} // ${team.name}`)
+            if (local == team.name || remote == team.name) {
                 content += this.getMatchEvent(m, teams, team, type)
             }
         }
