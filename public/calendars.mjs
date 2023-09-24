@@ -89,9 +89,10 @@ console.log('getics : '+group+'-'+team)
         for (let l = 0; l < matches.length; l++) {
             let m = matches[l]
 
-let local = fsgtScrapper.shortName(m.local) ;
+let local = m.local.replace(' ', '').toLocaleLowerCase();
+let remote = m.remote.replace(' ', '').toLocaleLowerCase();
 
-let remote = fsgtScrapper.shortName(m.remote);
+
 console.log(`and match ${local} ${remote} // ${team.name}`)
             if (local == team.name || remote == team.name) {
                 content += this.getMatchEvent(m, teams, team, type)
