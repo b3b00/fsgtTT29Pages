@@ -249,7 +249,7 @@ const fsgtScrapper = {
             console.log(`--> ${team.group} - ${team.name}`);
             teams.push(team)
         }
-        console.log(`found ${teams.length} teams in group ${group}`)
+        console.log(`(2) found ${teams.length} teams in group ${group}`)
         return teams
     },
 
@@ -372,7 +372,7 @@ export default {
             let html = await res.text()
 
             let teams = await fsgtScrapper.getTeams(html, false, group)
-            console.log(`found ${teams.legnth} teams in group ${group}`)
+            console.log(`(1) found ${teams.legnth} teams in group ${group}`)
             let matchArray = fsgtScrapper.getMatches(html)
             if (team != null) {
                 let te = iCalendarGeneration.getTeam(teams, team)
