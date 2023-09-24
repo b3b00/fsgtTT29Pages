@@ -223,7 +223,7 @@ const fsgtScrapper = {
      */
 
     getTeams: async function(html, light, group) {
-        console.log(`found ${teams.legnth} teams in group ${group}`)
+        console.log(`searching teams in group ${group}`);
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
             'div.view-equipes table tr td a'            
@@ -249,7 +249,7 @@ const fsgtScrapper = {
             console.log(`--> ${team.group} - ${team.name}`);
             teams.push(team)
         }
-
+        console.log(`found ${teams.legnth} teams in group ${group}`)
         return teams
     },
 
