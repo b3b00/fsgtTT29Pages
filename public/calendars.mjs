@@ -223,6 +223,7 @@ const fsgtScrapper = {
      */
 
     getTeams: async function(html, light, group) {
+        console.log(`found ${teams.legnth} teams in group ${group}`)
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
             'div.view-equipes table tr td a'            
@@ -359,7 +360,7 @@ export default {
         if (group == 'a') {
             url = groupe_url_schema
         }
-
+        console.log(`getting data from ${url}`);
         let res = await fetch(url,{
             cf: {                
                 cacheTtl: 3600,
@@ -367,13 +368,17 @@ export default {
               }
         })
         if (res.status == 200) {
+            console.log(`data is ok for ${group}/${team}`);
             let html = await res.text()
 
-            let teams = await fsgtScrapper.getTeams(html, false)
+            let teams = await fsgtScrapper.getTeams(html, false, group)
+            console.log(`found ${teams.legnth} teams in group ${group}`)
             let matchArray = fsgtScrapper.getMatches(html)
             if (team != null) {
                 let te = iCalendarGeneration.getTeam(teams, team)
+                console.log(`found team ${team} : ${te.name}`);
                 if (te != null) {
+                    console.log(`generating ICAL for ${team}`)
                     return iCalendarGeneration.getICS(
                         matchArray,
                         group,
