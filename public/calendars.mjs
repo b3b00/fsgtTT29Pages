@@ -38,13 +38,13 @@ const iCalendarGeneration = {
     },
 
     getTeam: function(teams, teamName) {
-        console.log(`searching team ${team} amongst ${teams.length} teams`);
+        console.log(`searching team ${teamName} among ${teams.length} teams`);
         for (let i = 0; i < teams.length; i++) {
             if (
                 teams[i].Name == teamName ||
                 fsgtScrapper.shortName(teams[i]) == teamName
             ) {
-                console.log(`found team ${team}`)
+                console.log(`found team ${teamName}`)
                 return teams[i]
             }
         }
