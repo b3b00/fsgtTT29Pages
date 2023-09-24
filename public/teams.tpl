@@ -1,3 +1,5 @@
 {{#teams}} 
-    <button hx-get="/calendars/{{group}}/{{name}}"  hx-indicator=".htmx-indicator">{{name}}</button>
+<form method="get" action="/calendars/{{group}}/{{name}}">
+   <button type"submit">{{name}}</button>
+</form>
 {{/teams}}
