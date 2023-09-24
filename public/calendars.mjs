@@ -38,11 +38,13 @@ const iCalendarGeneration = {
     },
 
     getTeam: function(teams, teamName) {
+        console.log(`searching team ${team} amongst ${teams.length} teams`);
         for (let i = 0; i < teams.length; i++) {
             if (
                 teams[i].Name == teamName ||
                 fsgtScrapper.shortName(teams[i]) == teamName
             ) {
+                console.log(`found team ${team}`)
                 return teams[i]
             }
         }
@@ -214,7 +216,7 @@ const fsgtScrapper = {
 
     shortName(team) {
         return team != null
-            ? team.Name.replace(' ', '').toLocaleLowerCase()
+            ? team.name.replace(' ', '').toLocaleLowerCase()
             : ''
     },
 
@@ -376,7 +378,8 @@ export default {
             let matchArray = fsgtScrapper.getMatches(html)
             console?.log(`found ${matchArray.length} matchs for ${group}-${team}`)
             if (team != null) {
-                let te = iCalendarGeneration.getTeam(teams, team)
+                console.log(`getting temp ${team}`);
+                let te = iCalendarGeneration.getTeam(teams, team)                
                 console.log(`found team ${team} : ${te.name}`);
                 if (te != null) {
                     console.log(`generating ICAL for ${team}`)
