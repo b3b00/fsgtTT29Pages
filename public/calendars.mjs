@@ -41,7 +41,7 @@ const iCalendarGeneration = {
         console.log(`searching team ${teamName} among ${teams.length} teams`);
         for (let i = 0; i < teams.length; i++) {
             if (
-                teams[i].Name == teamName ||
+                teams[i].name == teamName ||
                 fsgtScrapper.shortName(teams[i]) == teamName
             ) {
                 console.log(`found team ${teamName}`)
