@@ -1,4 +1,3 @@
-<option value="">Sélectionner une équipe</option>
-{{#teams}}
-<option value="{{Name}}">{{Name}}</option>
+{{#teams}} 
+    <button hx-get="/calendars/{{group}}/{{name}}" hx-target="#teams" hx-indicator=".htmx-indicator">{{name}}</button>
 {{/teams}}

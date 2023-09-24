@@ -222,7 +222,7 @@ const fsgtScrapper = {
      * get the teams
      */
 
-    getTeams: async function(html, light) {
+    getTeams: async function(html, light, group) {
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
             'div.view-equipes table tr td a'            
@@ -236,14 +236,16 @@ const fsgtScrapper = {
         
         let teams = []
         for (let i = 0; i < teamNames.length; i = i + 2) {
-            let team = {}
-            team.Name = teamNames[i]
+            let team = {};
+            team.name = teamNames[i].replace(' ', '').toLocaleLowerCase();
+            team.group= group;            
             if (!light) {
                 // do not request team playing day to avoir too many subrequests.
                 console.log(teamNames[i],teamUrls[i]);
                 const d = await fsgtScrapper.getTeamDay(team.Name,teamUrls[i])
                 team.Day = d
             }
+            console.log(`--> ${team.group} - ${team.name}`);
             teams.push(team)
         }
 
@@ -266,7 +268,7 @@ const fsgtScrapper = {
         console.log(`teams fetch @${url} => ${res.status} - ${res.statusText}`)
         if (res.status == 200) {
             let html = await res.text()
-            let teams = await fsgtScrapper.getTeams(html, true)
+            let teams = await fsgtScrapper.getTeams(html, true, group)
             return teams
         } else {
             return []
