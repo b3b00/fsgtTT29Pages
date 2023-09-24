@@ -1,4 +1,4 @@
-(import cheerio from 'cheerio'
+import cheerio from 'cheerio'
 
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
