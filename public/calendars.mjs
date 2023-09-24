@@ -249,7 +249,7 @@ const fsgtScrapper = {
             console.log(`--> ${team.group} - ${team.name}`);
             teams.push(team)
         }
-        console.log(`found ${teams.legnth} teams in group ${group}`)
+        console.log(`found ${teams.length} teams in group ${group}`)
         return teams
     },
 
