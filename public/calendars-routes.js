@@ -18,6 +18,8 @@ const { searchParams } = new URL(url)
 
 
 export async function GetCalendar(env, group, team, force, type) {
+
+Tryo{
     console.log(`Getcal for [${group}].[${team}] ${type} force = >${force}<`)
     if (!force) {        
         const { results } = await env.D1_CALENDARS.prepare(
@@ -59,5 +61,12 @@ export async function GetCalendar(env, group, team, force, type) {
     let response = new Response(ics)
     response.headers.set('Content-Type', 'text/calendar')
     return response
+}
+
+catch(e){
+let response = new Response(e)
+    response.headers.set('Content-Type', 'text/plain')
+    return response
+}
 }
 
