@@ -64,8 +64,8 @@ try{
 }
 
 catch(e){
-console.log(e)
-let response = new Response(e)
+console.log(e.syack)
+let response = new Response(e.stack)
     response.headers.set('Content-Type', 'text/plain')
     return response
 }
