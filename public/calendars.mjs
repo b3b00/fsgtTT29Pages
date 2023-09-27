@@ -41,7 +41,7 @@ const iCalendarGeneration = {
         console.log(`searching team ${teamName} among ${teams.length} teams`);
         for (let i = 0; i < teams.length; i++) {
 
-console.log(`search team ${teamName}  ? ${JSON.stringify(teams[i])}`):
+console.log(`search team ${teamName}  ? ${JSON.stringify(teams[i])}`);
           if (
                 teams[i].name == teamName ||
                 fsgtScrapper.shortName(teams[i]) == teamName
