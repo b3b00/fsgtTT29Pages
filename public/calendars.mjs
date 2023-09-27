@@ -40,7 +40,9 @@ const iCalendarGeneration = {
     getTeam: function(teams, teamName) {
         console.log(`searching team ${teamName} among ${teams.length} teams`);
         for (let i = 0; i < teams.length; i++) {
-            if (
+
+console.log(`search team ${teamName}  ? ${JSON.stringify(teams[i])}):
+          if (
                 teams[i].name == teamName ||
                 fsgtScrapper.shortName(teams[i]) == teamName
             ) {
@@ -48,6 +50,7 @@ const iCalendarGeneration = {
                 return teams[i]
             }
         }
+console.log('team '+teamName+' not found')
         return null
     },
 
