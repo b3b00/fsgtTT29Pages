@@ -64,7 +64,8 @@ try{
 }
 
 catch(e){
-let response = new Response(JSON.stringify(e))
+console.log(e)
+let response = new Response(e)
     response.headers.set('Content-Type', 'text/plain')
     return response
 }
