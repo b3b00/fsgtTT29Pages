@@ -43,7 +43,7 @@ const iCalendarGeneration = {
 
 console.log(`search team [${teamName.replace(' ','').toLocaleLowerCase()}]  ? ${JSON.stringify(teams[i])}`);
           if (
-                teams[i].name == teamName ||
+                teams[i].name == teamName.replace(' ','').toLocaleLowerCase() ||
                 fsgtScrapper.shortName(teams[i]) == teamName.replace(' ','').toLocaleLowerCase()
             ) {
                 console.log(`found team ${teamName} ${JSON.stringify(teams[i])}`)
