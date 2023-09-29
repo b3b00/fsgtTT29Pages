@@ -71,6 +71,7 @@ console.log('team '+teamName+' not found')
      * format match date
      */
     getMatchDate: function(match, teams) {
+console.log('getmatchdate -> getteam['+match.local+']')
         let localTeam = this.getTeam(teams, match.local)
         dayjs.extend(customParseFormat)
         let d = dayjs(match.date, 'DD/MM/YYYY')
@@ -84,7 +85,7 @@ console.log('team '+teamName+' not found')
     },
 
     getICS: function(matches, group, teams, team, type) {
-console.log('getics : '+group+'-'+team)
+console.log('getics : '+group+'-'+JSON.stringify(team))
         let content = ''
         content += 'BEGIN:VCALENDAR\r\n'
         content += 'X-WR-CALNAME:FSGT\r\n'
