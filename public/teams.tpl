@@ -1,4 +1,5 @@
-<option value="">Sélectionner une équipe</option>
-{{#teams}}
-<option value="{{Name}}">{{Name}}</option>
+{{#teams}} 
+<form method="get" action="/calendars/{{group}}/{{name}}">
+   <button type"submit">{{name}}</button>
+</form>
 {{/teams}}
