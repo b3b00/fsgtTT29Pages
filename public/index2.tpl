@@ -25,8 +25,10 @@
     <br><br>
     <label for="teams">Équipes :</label>
     <div  id="teams">        
-    </div><br><br>    
-    <fieldset data-role="controlgroup" data-type="horizontal">
+    </div>    
+   {{!--  
+   <br><br>
+   <fieldset data-role="controlgroup" data-type="horizontal">
         <legend>type de calendrier :</legend>
     <input type="radio" id="team" name="caltype" value="1"
              checked style="display:inline-block">
@@ -37,6 +39,7 @@
       </fieldset>
     <input type="checkbox" id="force">Regénérer le calendrier</input><br><br>
     <button  onclick="download();">Télécharger le calendrier</button>
+    }}
 
 </body>
 
