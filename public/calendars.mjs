@@ -29,7 +29,7 @@ const iCalendarGeneration = {
                 )
             }
         } else if (type == teamType) {
-            if (match.local == team.Name) {
+            if (match.local.toLocaleLowerCase().replace(' ', '') == team.name) {
                 return 'FSGT : ' + match.remote.replace('\t', '') + ' (dom.)'
             } else {
                 return 'FSGT : ' + match.local.replace('\t', '') + ' (ext.)'
@@ -38,19 +38,16 @@ const iCalendarGeneration = {
     },
 
     getTeam: function(teams, teamName) {
-        console.log(`searching team ${teamName.replace(' ','').toLocaleLowerCase()} among ${teams.length} teams`);
         for (let i = 0; i < teams.length; i++) {
-
-console.log(`search team [${teamName.replace(' ','').toLocaleLowerCase()}]  ? ${JSON.stringify(teams[i])}`);
-          if (
-                teams[i].name == teamName.replace(' ','').toLocaleLowerCase() ||
-                fsgtScrapper.shortName(teams[i]) == teamName.replace(' ','').toLocaleLowerCase()
+            if (
+                teams[i].name ==
+                    teamName.replace(' ', '').toLocaleLowerCase() ||
+                fsgtScrapper.shortName(teams[i]) ==
+                    teamName.replace(' ', '').toLocaleLowerCase()
             ) {
-                console.log(`found team ${teamName} ${JSON.stringify(teams[i])}`)
                 return teams[i]
             }
-        }
-console.log('team '+teamName+' not found')
+        }        
         return null
     },
 
@@ -71,7 +68,6 @@ console.log('team '+teamName+' not found')
      * format match date
      */
     getMatchDate: function(match, teams) {
-console.log('getmatchdate -> getteam['+match.local+']')
         let localTeam = this.getTeam(teams, match.local)
         dayjs.extend(customParseFormat)
         let d = dayjs(match.date, 'DD/MM/YYYY')
@@ -85,7 +81,6 @@ console.log('getmatchdate -> getteam['+match.local+']')
     },
 
     getICS: function(matches, group, teams, team, type) {
-console.log('getics : '+group+'-'+JSON.stringify(team))
         let content = ''
         content += 'BEGIN:VCALENDAR\r\n'
         content += 'X-WR-CALNAME:FSGT\r\n'
@@ -93,11 +88,9 @@ console.log('getics : '+group+'-'+JSON.stringify(team))
         for (let l = 0; l < matches.length; l++) {
             let m = matches[l]
 
-let local = m.local.replace(' ', '').toLocaleLowerCase();
-let remote = m.remote.replace(' ', '').toLocaleLowerCase();
+            let local = m.local.replace(' ', '').toLocaleLowerCase()
+            let remote = m.remote.replace(' ', '').toLocaleLowerCase()
 
-
-console.log(`and match ${local} ${remote} // ${team.name}`)
             if (local == team.name || remote == team.name) {
                 content += this.getMatchEvent(m, teams, team, type)
             }
@@ -194,17 +187,17 @@ const scrapper = {
 
 const fsgtScrapper = {
     getTeamDay: async function(team, url) {
-        let basoluteUrl = 'http://t2t.29.fsgt.org'+url
+        let basoluteUrl = 'http://t2t.29.fsgt.org' + url
         //let url =
-            //'http://t2t.29.fsgt.org/equipe/' +
-            //team.replace(/ /g, '-').toLowerCase()
+        //'http://t2t.29.fsgt.org/equipe/' +
+        //team.replace(/ /g, '-').toLowerCase()
         // NOTE : cloudflare catch for outgoing request can be configured using cf:{} options
         // see https://developers.cloudflare.com/workers/examples/cache-using-fetch/
-        let res = await fetch(basoluteUrl,{
-            cf: {                
+        let res = await fetch(basoluteUrl, {
+            cf: {
                 cacheTtl: 3600,
-                cacheEverything: true                
-              }
+                cacheEverything: true,
+            },
         })
         let day = ''
 
@@ -236,33 +229,29 @@ const fsgtScrapper = {
      */
 
     getTeams: async function(html, light, group) {
-        console.log(`searching teams in group ${group}`);
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
-            'div.view-equipes table tr td a'            
+            'div.view-equipes table tr td a'
         )
 
         let teamUrls = scrapper.etxractAttributeFromNodeArray(
             html,
             'div.view-equipes table tr td a',
-            'href'            
+            'href'
         )
-        
+
         let teams = []
         for (let i = 0; i < teamNames.length; i = i + 2) {
-            let team = {};
-            team.name = teamNames[i].replace(' ', '').toLocaleLowerCase();
-            team.group= group;            
+            let team = {}
+            team.name = teamNames[i].replace(' ', '').toLocaleLowerCase()
+            team.group = group
             if (!light) {
                 // do not request team playing day to avoir too many subrequests.
-                console.log(teamNames[i],teamUrls[i]);
-                const d = await fsgtScrapper.getTeamDay(team.Name,teamUrls[i])
+                const d = await fsgtScrapper.getTeamDay(team.Name, teamUrls[i])
                 team.Day = d
             }
-            console.log(`--> ${team.group} - ${team.name}`);
             teams.push(team)
         }
-        console.log(`(2) found ${teams.length} teams in group ${group}`)
         return teams
     },
 
@@ -273,13 +262,12 @@ const fsgtScrapper = {
             url = groupe_url_schema
         }
 
-        let res = await fetch(url,{
-            cf: {                
+        let res = await fetch(url, {
+            cf: {
                 cacheTtl: 3600,
-                cacheEverything: true                
-              }
+                cacheEverything: true,
+            },
         })
-        console.log(`teams fetch @${url} => ${res.status} - ${res.statusText}`)
         if (res.status == 200) {
             let html = await res.text()
             let teams = await fsgtScrapper.getTeams(html, true, group)
@@ -298,11 +286,11 @@ const fsgtScrapper = {
                 url = groupe_url_schema
             }
             try {
-                let res = await fetch(url,{
-                    cf: {                
+                let res = await fetch(url, {
+                    cf: {
                         cacheTtl: 3600,
-                        cacheEverything: true                
-                      }
+                        cacheEverything: true,
+                    },
                 })
 
                 if (res.status == 200) {
@@ -373,27 +361,20 @@ export default {
         if (group == 'a') {
             url = groupe_url_schema
         }
-        console.log(`getting data from ${url}`);
-        let res = await fetch(url,{
-            cf: {                
+        let res = await fetch(url, {
+            cf: {
                 cacheTtl: 3600,
-                cacheEverything: true                
-              }
+                cacheEverything: true,
+            },
         })
         if (res.status == 200) {
-            console.log(`data is ok for ${group}/${team}`);
             let html = await res.text()
 
             let teams = await fsgtScrapper.getTeams(html, false, group)
-            console.log(`(1) found ${teams.length} teams in group ${group}`)
             let matchArray = fsgtScrapper.getMatches(html)
-            console?.log(`found ${matchArray.length} matchs for ${group}-${team}`)
             if (team != null) {
-                console.log(`getting temp ${team}`);
-                let te = iCalendarGeneration.getTeam(teams, team)                
-                console.log(`found team ${team} : ${te.name}`);
+                let te = iCalendarGeneration.getTeam(teams, team)
                 if (te != null) {
-                    console.log(`generating ICAL for ${team}`)
                     return iCalendarGeneration.getICS(
                         matchArray,
                         group,
@@ -413,11 +394,11 @@ export default {
             url = groupe_url_schema
         }
 
-        let res = await fetch(url,{
-            cf: {                
+        let res = await fetch(url, {
+            cf: {
                 cacheTtl: 3600,
-                cacheEverything: true                
-              }
+                cacheEverything: true,
+            },
         })
 
         if (res.status == 200) {
