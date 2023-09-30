@@ -240,14 +240,29 @@ const fsgtScrapper = {
             'href'
         )
 
+        let newNames = []
+        let newUrls = []
+        for (let ir = 0;  ir < teamNames.length; ir++) {
+            if (!teamNames[ir].toLocaleLowerCase().startsWith('exempt') && teamUrls[ir].includes('/equipe/')) {
+                newNames.push(teamNames[ir]);
+                newUrls.push(teamUrls[ir]);
+            }
+            else {
+                console.log('d');
+            }
+        }
+
+       
+
         let teams = []
-        for (let i = 0; i < teamNames.length; i = i + 2) {
+        for (let i = 0; i < newNames.length; i ++) {
             let team = {}
-            team.name = teamNames[i].replace(' ', '').toLocaleLowerCase()
+            team.name = newNames[i].replace(' ', '').toLocaleLowerCase()
             team.group = group
             if (!light) {
                 // do not request team playing day to avoir too many subrequests.
-                const d = await fsgtScrapper.getTeamDay(team.Name, teamUrls[i])
+                console.log(newNames[i], newUrls[i])
+                const d = await fsgtScrapper.getTeamDay(team.Name, newUrls[i])
                 team.Day = d
             }
             teams.push(team)
