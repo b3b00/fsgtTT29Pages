@@ -2,6 +2,8 @@
 <html>
 
 <head>
+
+<meta name="viewport" content="width=device-width,initial-scale=1" />
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
     <title>FSGT 29 TT calendars</title>
