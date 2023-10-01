@@ -19,7 +19,7 @@
 
     <iframe id="downloader" style="display:none" ></iframe>
 
-    <h1 >charger votre calendrier FSGT TT 29</h1>
+    <h1 >Calendrier FSGT TT 29</h1>
     <label for="groups">Groupes : </label>
     {{#groups}} 
     <button hx-get="/teams?group={{name}}" hx-target="#teams" hx-indicator=".htmx-indicator">{{name}}</button>
