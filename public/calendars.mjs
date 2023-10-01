@@ -373,7 +373,7 @@ export default {
     GetCalendar: async function(group, team, type) {
         let url = groupe_url_schema + '-' + group
 
-        if (group == 'a') {
+        if (group.toLocaleLowerCase() == 'a') {
             url = groupe_url_schema
         }
         let res = await fetch(url, {
