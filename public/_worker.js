@@ -68,7 +68,10 @@ router.get(
         )
 )
 
-
+router.get('/flush', withParams,
+async (request, env, context, group, team) => {
+    const { results } = await env.D1_CALENDARS.prepare('DELETE FROM calendars').run();
+});
 
 router.get('/groups', async () => {
     return await GetGroups()
