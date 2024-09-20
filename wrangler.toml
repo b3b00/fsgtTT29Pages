@@ -1,0 +1,6 @@
+[vars]
+
+[[d1_databases]]
+binding = "D1_CALENDARS"
+database_name = "fsgt_tt_29"
+database_id = "889b6e04-0820-4662-b878-6a566846bbe2"
