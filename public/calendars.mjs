@@ -247,9 +247,6 @@ const fsgtScrapper = {
                 newNames.push(teamNames[ir]);
                 newUrls.push(teamUrls[ir]);
             }
-            else {
-                console.log('d');
-            }
         }
 
        

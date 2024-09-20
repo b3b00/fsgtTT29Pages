@@ -17,47 +17,40 @@ const { searchParams } = new URL(url)
 }
 
 
-export async function GetCalendar(env, group, team, force, type) {
+export async function GetCalendar(env, groupe, team, force, type) {
 
 try{
-    console.log(`Getcal for [${group}].[${team}] ${type} force = >${force}<`)
     if (!force) {
-        console.log(`prepare request [SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?], then run it`);
-        const { results } = await env.D1_CALENDARS.prepare(
+        const prepared  = env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?'
         )
-            .bind(group, team, type)
-            .all()
-        console.log(`results for groupe:${group}, team:${team}, type:${type}`,results);
+            .bind(groupe, team, type);
+
+        const { results } = await prepared.all();
+        // console.log('.all() ran.... go go go');
+        // console.log(`results for groupe:${group}, team:${team}, type:${type}`,results);
         if (results && results.length > 0) {
-            console.log('returning saved calendar from SQLite ',results[0]);
             let response = new Response(results[0].calendar)
             response.headers.set('Content-Type', 'text/calendar')
             return response
-        } else {
-            console.log('no calendar in table')
         }
     }
 
-    console.log('computing calendar from FSGT site')
-    let ics = await calendars.GetCalendar(group, team, type)
+    let ics = await calendars.GetCalendar(groupe, team, type)
 
     if (ics && ics.length > 0) {
         await env.D1_CALENDARS.prepare(
             'DELETE FROM calendars WHERE groupe = ? and team = ? and type = ?'
         )
-            .bind(group, team, type)
+            .bind(groupe, team, type)
             .run()
-
         const { duration } = (
             await env.D1_CALENDARS.prepare(
                 'INSERT INTO calendars (groupe,team, type, calendar) VALUES (?1, ?2, ?3, ?4)'
             )
-                .bind(group, team, type, ics)
+                .bind(groupe, team, type, ics)
                 .run()
         ).meta
-
-        console.log('insert duration : ', duration)
     }
 
     let response = new Response(ics)
@@ -66,7 +59,9 @@ try{
 }
 
 catch(e){
-console.log(e.syack)
+console.log(e);
+console.log(e.message);
+console.log(e.stack)
 let response = new Response(e.message+"\n"+e.stack)
     response.headers.set('Content-Type', 'text/plain')
     return response

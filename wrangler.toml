@@ -1,3 +1,6 @@
+name = "fsgttt"
+pages_build_output_dir = "./public"
+
 [vars]
 
 [[d1_databases]]
