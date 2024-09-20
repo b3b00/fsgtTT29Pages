@@ -21,14 +21,16 @@ export async function GetCalendar(env, group, team, force, type) {
 
 try{
     console.log(`Getcal for [${group}].[${team}] ${type} force = >${force}<`)
-    if (!force) {        
+    if (!force) {
+        console.log(`prepare request [SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?], then run it`);
         const { results } = await env.D1_CALENDARS.prepare(
             'SELECT * FROM calendars WHERE groupe=? AND team = ? AND type=?'
         )
             .bind(group, team, type)
             .all()
+        console.log(`results for groupe:${group}, team:${team}, type:${type}`,results);
         if (results && results.length > 0) {
-            console.log('returning saved calendar from SQLite ');
+            console.log('returning saved calendar from SQLite ',results[0]);
             let response = new Response(results[0].calendar)
             response.headers.set('Content-Type', 'text/calendar')
             return response
