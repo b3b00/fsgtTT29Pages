@@ -28,7 +28,7 @@ try{
             .bind(group, team, type)
             .all()
         if (results && results.length > 0) {
-            console.log('returning saved calendar : ')
+            console.log('returning saved calendar from SQLite ');
             let response = new Response(results[0].calendar)
             response.headers.set('Content-Type', 'text/calendar')
             return response
