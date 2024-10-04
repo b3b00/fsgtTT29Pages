@@ -21,7 +21,6 @@
         "dayjs": "^1.11.10",
         "dracula-ui": "^1.0.3",
         "ejs": "^2.5.6",
-        "FSGT_TT_29": "file:",
         "itty-router": "^4.0.14",
         "moment": "^2.24.0",
         "mustache": "^4.2.0",
