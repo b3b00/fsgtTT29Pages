@@ -92,7 +92,7 @@ const iCalendarGeneration = {
             let remote = m.remote.replace(' ', '').toLocaleLowerCase()
 
             if (!local.toLocaleLowerCase().startsWith('exempt')  
-                &&  !remonte.toLocaleLowerCase().startsWith('exempt') 
+                &&  !remote.toLocaleLowerCase().startsWith('exempt') 
                 && (local == team.name || remote == team.name)) {
                 content += this.getMatchEvent(m, teams, team, type)
             }
