@@ -6,7 +6,7 @@
 wrangler pages dev ./public/ --persist-to=./.wrangler/state/d1  --d1=D1_CALENDARS
 ```
 
-database is tored at
+database is stored at
 ```
 .wrangler/state/d1/v3/d1/miniflare-D1DatabaseObject/xxx.sqlitea
 ```
