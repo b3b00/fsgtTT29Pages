@@ -229,16 +229,21 @@ const fsgtScrapper = {
      */
 
     getTeams: async function(html, light, group) {
+
+//console.log(`extract teams from HTML ${html}`);
+
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
-            'div.view-equipes table tr td a'
+            'div.equipes-groupe ul li a'
         )
+        console.log('team names',teamNames);
 
         let teamUrls = scrapper.etxractAttributeFromNodeArray(
             html,
-            'div.view-equipes table tr td a',
+            'div.equipes-groupe ul li a',
             'href'
         )
+        console.log('team urls',teamUrls);
 
         let newNames = []
         let newUrls = []
@@ -248,7 +253,7 @@ const fsgtScrapper = {
                 newUrls.push(teamUrls[ir]);
             }
         }
-
+console.log('new names',newNames);
        
 
         let teams = []
@@ -273,16 +278,19 @@ const fsgtScrapper = {
         if (group == 'a' || group == 'A') {
             url = groupe_url_schema
         }
-
+console.log(`getting teams for group ${group} : ${url}`)
         let res = await fetch(url, {
             cf: {
                 cacheTtl: 3600,
                 cacheEverything: true,
             },
         })
+        console.log(`http return : ${res.status} - ${res.statusText}`)
         if (res.status == 200) {
+            console.log(`reading html`);
             let html = await res.text()
             let teams = await fsgtScrapper.getTeams(html, true, group)
+            console.log(`found ${teams.length} teams ${teams.map(x => x.name).join(', ')}`);
             return teams
         } else {
             return []

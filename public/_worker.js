@@ -105,7 +105,7 @@ router.get('/teams', async(request, env) => {
         var teams = await GetTeams(group);
         console.log(teams)
         teams.forEach(x => console.log(`${x.group} - ${x.name}`))
-        var response = RenderHtml(env,request,'teams.tpl',{group,teams});
+        var response = await RenderHtml(env,request,'teams.tpl',{group,teams});
         return response;
     }
     
