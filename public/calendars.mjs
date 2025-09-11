@@ -193,7 +193,7 @@ const fsgtScrapper = {
         //team.replace(/ /g, '-').toLowerCase()
         // NOTE : cloudflare catch for outgoing request can be configured using cf:{} options
         // see https://developers.cloudflare.com/workers/examples/cache-using-fetch/
-        let res = await fetch(basoluteUrl, {
+        let res = await fetch(url, {
             cf: {
                 cacheTtl: 3600,
                 cacheEverything: true,
@@ -243,7 +243,6 @@ const fsgtScrapper = {
             'div.equipes-groupe ul li a',
             'href'
         )
-        console.log('team urls',teamUrls);
 
         let newNames = []
         let newUrls = []
@@ -253,7 +252,7 @@ const fsgtScrapper = {
                 newUrls.push(teamUrls[ir]);
             }
         }
-console.log('new names',newNames);
+
        
 
         let teams = []
@@ -262,8 +261,7 @@ console.log('new names',newNames);
             team.name = newNames[i].replace(' ', '').toLocaleLowerCase()
             team.group = group
             if (!light) {
-                // do not request team playing day to avoir too many subrequests.
-                console.log(newNames[i], newUrls[i])
+                // do not request team playing day to limit subrequests.
                 const d = await fsgtScrapper.getTeamDay(team.Name, newUrls[i])
                 team.Day = d
             }

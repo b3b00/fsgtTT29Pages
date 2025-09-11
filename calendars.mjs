@@ -187,20 +187,18 @@ const scrapper = {
 
 const fsgtScrapper = {
     getTeamDay: async function(team, url) {
-        let basoluteUrl = 'http://t2t.29.fsgt.org' + url
         //let url =
         //'http://t2t.29.fsgt.org/equipe/' +
         //team.replace(/ /g, '-').toLowerCase()
         // NOTE : cloudflare catch for outgoing request can be configured using cf:{} options
         // see https://developers.cloudflare.com/workers/examples/cache-using-fetch/
-        let res = await fetch(basoluteUrl, {
+        let res = await fetch(url, {
             cf: {
                 cacheTtl: 3600,
                 cacheEverything: true,
             },
         })
         let day = ''
-
         if (res.status == 200) {
             let html = await res.text()
 
