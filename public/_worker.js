@@ -90,7 +90,8 @@ router.get('/', async(request, env) => {
             {"name":"C"},
             {"name":"D"},
             {"name":"E"},
-            {"name":"F"}
+            {"name":"F"},
+            {"name":"G"}
         ],
     }
 
@@ -137,3 +138,4 @@ export default {
         // await doATask();
     },
 }
+
