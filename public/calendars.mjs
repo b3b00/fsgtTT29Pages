@@ -195,7 +195,7 @@ const fsgtScrapper = {
         //team.replace(/ /g, '-').toLowerCase()
         // NOTE : cloudflare catch for outgoing request can be configured using cf:{} options
         // see https://developers.cloudflare.com/workers/examples/cache-using-fetch/
-        let res = await fetch(basoluteUrl, {
+        let res = await fetch(url, {
             cf: {
                 cacheTtl: 3600,
                 cacheEverything: true,
@@ -231,14 +231,18 @@ const fsgtScrapper = {
      */
 
     getTeams: async function(html, light, group) {
+
+//console.log(`extract teams from HTML ${html}`);
+
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
-            'div.view-equipes table tr td a'
+            'div.equipes-groupe ul li a'
         )
+        console.log('team names',teamNames);
 
         let teamUrls = scrapper.etxractAttributeFromNodeArray(
             html,
-            'div.view-equipes table tr td a',
+            'div.equipes-groupe ul li a',
             'href'
         )
 
@@ -259,8 +263,7 @@ const fsgtScrapper = {
             team.name = newNames[i].replace(' ', '').toLocaleLowerCase()
             team.group = group
             if (!light) {
-                // do not request team playing day to avoir too many subrequests.
-                console.log(newNames[i], newUrls[i])
+                // do not request team playing day to limit subrequests.
                 const d = await fsgtScrapper.getTeamDay(team.Name, newUrls[i])
                 team.Day = d
             }
@@ -275,16 +278,19 @@ const fsgtScrapper = {
         if (group == 'a' || group == 'A') {
             url = groupe_url_schema
         }
-
+console.log(`getting teams for group ${group} : ${url}`)
         let res = await fetch(url, {
             cf: {
                 cacheTtl: 3600,
                 cacheEverything: true,
             },
         })
+        console.log(`http return : ${res.status} - ${res.statusText}`)
         if (res.status == 200) {
+            console.log(`reading html`);
             let html = await res.text()
             let teams = await fsgtScrapper.getTeams(html, true, group)
+            console.log(`found ${teams.length} teams ${teams.map(x => x.name).join(', ')}`);
             return teams
         } else {
             return []

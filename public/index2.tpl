@@ -23,7 +23,7 @@
     <h1 >Calendrier FSGT TT 29</h1>
     <label for="groups">Groupes : </label>
     {{#groups}} 
-    <button hx-get="/teams?group={{name}}" hx-target="#teams" hx-indicator=".htmx-indicator">{{name}}</button>
+    <button hx-get="/teams?group={{name}}" hx-target="#teams">{{name}}</button>
     {{/groups}}    
     <br><br>
     <label for="teams">Équipes :</label>

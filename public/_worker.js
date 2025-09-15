@@ -90,7 +90,8 @@ router.get('/', async(request, env) => {
             {"name":"C"},
             {"name":"D"},
             {"name":"E"},
-            {"name":"F"}
+            {"name":"F"},
+            {"name":"G"}
         ],
     }
 
@@ -101,11 +102,8 @@ router.get('/teams', async(request, env) => {
 
     var teamfetcher = async () => {
         var group = request.query.group;
-        console.log(`get teams for group ${group}`)
         var teams = await GetTeams(group);
-        console.log(teams)
-        teams.forEach(x => console.log(`${x.group} - ${x.name}`))
-        var response = RenderHtml(env,request,'teams.tpl',{group,teams});
+        var response = await RenderHtml(env,request,'teams.tpl',{group,teams});
         return response;
     }
     
@@ -140,3 +138,4 @@ export default {
         // await doATask();
     },
 }
+
