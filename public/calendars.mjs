@@ -71,9 +71,12 @@ const iCalendarGeneration = {
         let localTeam = this.getTeam(teams, match.local)
         dayjs.extend(customParseFormat)
         let d = dayjs(match.date, 'DD/MM/YYYY')
-        let dayInWeek = d.dayInWeek
-        let localTeamDay = this.getLocalTeamWeekDay(localTeam.Day)
-        d = d.day(localTeamDay)
+        let notADay = false;
+        if (localTeam.Day.includes('di')) {
+            // if localTeam day is invalid, do not adjust date
+            let localTeamDay = this.getLocalTeamWeekDay(localTeam.Day)
+            d = d.day(localTeamDay)
+        }
 
         let dateStr = d.format('YYYYMMDDT')
 
