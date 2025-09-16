@@ -5,9 +5,9 @@ import calendars from './calendars.mjs'
 //import calendars from './calendars.mjs';
 
 
-const team='plabennec1';
+const team='plabennec4';
 
-const cal = await calendars.GetCalendar('a',team);
+const cal = await calendars.GetCalendar('g',team);
 
 console.log(cal);
 

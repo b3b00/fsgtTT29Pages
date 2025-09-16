@@ -1,5 +1,5 @@
 import cheerio from 'cheerio'
-import fetch from 'node-fetch'
+
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 
@@ -71,9 +71,12 @@ const iCalendarGeneration = {
         let localTeam = this.getTeam(teams, match.local)
         dayjs.extend(customParseFormat)
         let d = dayjs(match.date, 'DD/MM/YYYY')
-        let dayInWeek = d.dayInWeek
-        let localTeamDay = this.getLocalTeamWeekDay(localTeam.Day)
-        d = d.day(localTeamDay)
+        let notADay = false;
+        if (localTeam.Day.includes('di')) {
+            // if localTeam day is invalid, do not adjust date
+            let localTeamDay = this.getLocalTeamWeekDay(localTeam.Day)
+            d = d.day(localTeamDay)
+        }
 
         let dateStr = d.format('YYYYMMDDT')
 
@@ -91,7 +94,9 @@ const iCalendarGeneration = {
             let local = m.local.replace(' ', '').toLocaleLowerCase()
             let remote = m.remote.replace(' ', '').toLocaleLowerCase()
 
-            if (local == team.name || remote == team.name) {
+            if (!local.toLocaleLowerCase().startsWith('exempt')  
+                &&  !remote.toLocaleLowerCase().startsWith('exempt') 
+                && (local == team.name || remote == team.name)) {
                 content += this.getMatchEvent(m, teams, team, type)
             }
         }
@@ -104,7 +109,7 @@ const iCalendarGeneration = {
         // content += "\r\nX-WR-TIMEZONE:Europe/Paris\r\n";
         let date = this.getMatchDate(match, teams)
         content += 'DTSTART;TZID=/Europe/Paris:' + date + '200000\r\n'
-        content += 'UID:UUID\r\n'
+        content += 'UID:' + crypto.randomUUID().toUpperCase() + '\r\n'
         content += 'DTEND;TZID=/Europe/Paris:' + date + '220000\r\n'
         let lbl = this.getMatchLabel(match, team, teamType)
         let description =
@@ -187,6 +192,7 @@ const scrapper = {
 
 const fsgtScrapper = {
     getTeamDay: async function(team, url) {
+        let basoluteUrl = 'http://t2t.29.fsgt.org' + url
         //let url =
         //'http://t2t.29.fsgt.org/equipe/' +
         //team.replace(/ /g, '-').toLowerCase()
@@ -199,6 +205,7 @@ const fsgtScrapper = {
             },
         })
         let day = ''
+
         if (res.status == 200) {
             let html = await res.text()
 
@@ -227,14 +234,18 @@ const fsgtScrapper = {
      */
 
     getTeams: async function(html, light, group) {
+
+//console.log(`extract teams from HTML ${html}`);
+
         let teamNames = scrapper.etxractdataFromNodeArray(
             html,
-            'div.view-equipes table tr td a'
+            'div.equipes-groupe ul li a'
         )
+        console.log('team names',teamNames);
 
         let teamUrls = scrapper.etxractAttributeFromNodeArray(
             html,
-            'div.view-equipes table tr td a',
+            'div.equipes-groupe ul li a',
             'href'
         )
 
@@ -244,9 +255,6 @@ const fsgtScrapper = {
             if (!teamNames[ir].toLocaleLowerCase().startsWith('exempt') && teamUrls[ir].includes('/equipe/')) {
                 newNames.push(teamNames[ir]);
                 newUrls.push(teamUrls[ir]);
-            }
-            else {                
-                console.log(`rejecting team [${teamNames[ir]}]`);
             }
         }
 
@@ -258,8 +266,7 @@ const fsgtScrapper = {
             team.name = newNames[i].replace(' ', '').toLocaleLowerCase()
             team.group = group
             if (!light) {
-                // do not request team playing day to avoir too many subrequests.
-                console.log(newNames[i], newUrls[i])
+                // do not request team playing day to limit subrequests.
                 const d = await fsgtScrapper.getTeamDay(team.Name, newUrls[i])
                 team.Day = d
             }
@@ -274,16 +281,19 @@ const fsgtScrapper = {
         if (group == 'a' || group == 'A') {
             url = groupe_url_schema
         }
-
+console.log(`getting teams for group ${group} : ${url}`)
         let res = await fetch(url, {
             cf: {
                 cacheTtl: 3600,
                 cacheEverything: true,
             },
         })
+        console.log(`http return : ${res.status} - ${res.statusText}`)
         if (res.status == 200) {
+            console.log(`reading html`);
             let html = await res.text()
             let teams = await fsgtScrapper.getTeams(html, true, group)
+            console.log(`found ${teams.length} teams ${teams.map(x => x.name).join(', ')}`);
             return teams
         } else {
             return []
@@ -370,9 +380,8 @@ export default {
     scrapper: fsgtScrapper,
     GetCalendar: async function(group, team, type) {
         let url = groupe_url_schema + '-' + group
-        console.log(`GetCalendar ${group} ${team} ${type}`);
+
         if (group.toLocaleLowerCase() == 'a') {
-            console.log(`group is A => URL == ${groupe_url_schema}`)
             url = groupe_url_schema
         }
         let res = await fetch(url, {
